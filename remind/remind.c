@@ -8,12 +8,13 @@
 #include <stdbool.h>
 
 
-#define MAX_REMINDERS 10
+#define MAX_REMINDERS 3
 #define MSG_STR_LENGTH 60
-#define DAY_STR_LENGTH 2
-#define REMINDER_LENGTH (MSG_STR_LENGTH + DAY_STR_LENGTH + 1)
+// Length of month/day <hh:mm> string
+#define MDT_STR_LENGTH 12
+#define REMINDER_LENGTH (MSG_STR_LENGTH + MDT_STR_LENGTH + 1)
 
-#define TERMINATING_CHAR '0'
+#define TERMINATING_CHAR '\n'
 
 
 // Reads n characters of input line into a.
@@ -24,6 +25,7 @@ static int readln(char a[], int n);
 static void print_reminders(char (*reminders)[REMINDER_LENGTH], int n);
 
 // Reads reminder from stdin into string rem. Return false on termination.
+// Writes empty string if wrong month or day or time specified
 static bool read_reminder(char rem[REMINDER_LENGTH]);
 
 // Writes reminder rem into reminders array of length num_rem.
@@ -41,19 +43,24 @@ int main(void)
 	int num_rems;
 
 	printf("\nThis program prints a list of daily reminders\n");
-	printf("You need to enter series of reminders using a format"
-		" <day reminder>. As an example:\n");
-	printf("12 Susan's Birthday\n");
-	printf("If you are done entering reminders, enter '%c'\n",
-		TERMINATING_CHAR);
+	printf("You need to enter series of reminders using a special format:\n");
+	printf("\tmonth/day hh:mm reminder\n");
+	printf("Example: 1/29 23:30 Go to dance party.\n");
+	printf("If you are done entering reminders, enter an empty line\n");
 	printf("Maximum number of reminders: %d\n", MAX_REMINDERS);
 	printf("Maximum length of reminder: %d\n\n", REMINDER_LENGTH);
 
 	for (num_rems = 0; num_rems < MAX_REMINDERS; num_rems++) {
-		printf("Enter <day reminder>: ");
+		printf("month/day hh:mm reminder: ");
 		// User entered terminating char
 		if (!read_reminder(rem))
 			break;
+		// User entered wrong month/date <time>
+		if (!*rem) {
+			printf("Wrong month/date <time> entered!\n");
+			num_rems--;
+			continue;
+		}
 		write_reminder(rem, reminders, num_rems);
 	}
 
@@ -83,34 +90,48 @@ void print_reminders(char (*reminders)[REMINDER_LENGTH], int n)
 {
 	char (*p)[REMINDER_LENGTH];
 
-	printf("\nDay Reminder\n");
+	printf("\nmm/dd hh:mm Reminder\n");
 
 	for (p = reminders; p < reminders + n; p++)
-		printf(" %s\n", *p);
+		printf("%s\n", *p);
 }
 
 
 bool read_reminder(char rem[REMINDER_LENGTH])
 {
-	char msg[MSG_STR_LENGTH + 1], day_str[DAY_STR_LENGTH + 1];
+	char msg[MSG_STR_LENGTH + 1], mdt_str[MDT_STR_LENGTH + 1];
 	char c;
-	int day;
+	int month, day, hour, minute;
+
 
 	// Return false if terminating character was read
 	if ((c = getchar()) == TERMINATING_CHAR)
 		return false;
 	ungetc(c, stdin);
 
-	// Read d-digit day
-	scanf("%2d", &day);
-	// Return
-	sprintf(day_str, "%2d", day);
+	// Read month day and time 
+	month = day = hour = minute = 0;
+	scanf("%2d/%2d %2d:%2d", &month, &day, &hour, &minute);
+	// Write an empty string if the values aren't proper.
+	if (
+		month < 1 || month > 12 ||
+		day < 1 || day > 31 ||
+		hour < 1 || hour > 23 ||
+		minute < 1 || minute > 59
+	) {
+		while ((c = getchar()) != '\n')
+			;
+		strcpy(rem, "");
+		return true;
+	}
+
+	sprintf(mdt_str, "%2.2d/%2.2d %2d:%2.2d", month, day, hour, minute);
 
 	// Read msg
-	readln(msg, MSG_STR_LENGTH);
+	readln(msg, MSG_STR_LENGTH - 1);
 
-	// Concantenate day_str and msg and copy them into rem
-	strcat(strcpy(rem, day_str), msg);
+	// Concantenate mdt_str and msg and copy them into rem
+	strcat(strcpy(rem, mdt_str), msg);
 
 	return true;
 }
