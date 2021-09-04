@@ -7,38 +7,64 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include <string.h>
 
-#define LAST_NAME_SZ 20
+
+//#define LAST_NAME_SZ 20
+#define MAX_NAME_SIZE 40
+
+
+static char *reverse_name(char *name);
 
 
 int main(void)
 {
-	char last_name[LAST_NAME_SZ] = {0};
-	char fni, ch;
-	int i = 0, j = 0;
-	fni = ch = (char)0;
-	bool skip_fn = false;
+	char name[MAX_NAME_SIZE];
 
-	printf("Enter a first and last name: ");
+	printf("Enter <FirstName LastName>: ");
+	fgets(name, sizeof name, stdin);
+	*(name + strlen(name) - 1) = 0;
 
-	while ((ch = getchar()) != '\n' && i < LAST_NAME_SZ) {
-		if (ch == ' ') {
-			if (skip_fn)
-				skip_fn = false;
-			continue;
-		}
-		else if (!fni) {
-			fni = ch;
-			skip_fn = true;
-			continue;
-		}
-		else if (!skip_fn)
-			last_name[i++] = ch;
-	}
-
-	for (j = 0; j < i; ++j)
-	       putchar(last_name[j]);	
-	printf(", %c.\n", fni);
+	printf("Result: %s\n", reverse_name(name));
 
 	return 0;
+}
+
+
+static char *reverse_name(char *name)
+{
+	char fni, *pln, *pn = name;
+
+	// Find first name initial
+	for (pln = name; *pln && !isalpha(*pln); pln++)
+		;
+	fni = *pln;
+
+	// Skip first name (until space)
+	for ( ; *pln && isalpha(*pln); pln++)
+		;
+	// Find last name beginning (skip space)
+	for ( ; *pln && !isalpha(*pln); pln++)
+		;
+
+	// write last name
+	while (*pln && isalpha(*pln))
+		*pn++ = *pln++;
+	// write comma
+	if (*pn)
+		*pn++ = ',';
+	// write space
+	if (*pn)
+		*pn++ = ' ';
+	// write first name initial
+	if (*pn && fni)
+		*pn++ = toupper(fni);
+	// write period
+	if (*pn)
+		*pn++ = '.';
+
+	// write terminating null
+	*pn = 0;
+
+	return name;
 }

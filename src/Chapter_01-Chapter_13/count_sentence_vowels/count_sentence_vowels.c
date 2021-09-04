@@ -7,22 +7,34 @@
 #include <ctype.h>
 
 
+#define MAX_SENTENCE_SIZE 70
+static int count_vowels(const char *sentence);
+
+
 int main(void)
 {
-	int counter = 0;
-	char ch;
+	char sentence[MAX_SENTENCE_SIZE];
 
 	printf("Enter a sentence: ");
+	fgets(sentence, sizeof sentence, stdin);
 
-	while ((ch = getchar()) != '\n') {
-		switch (toupper(ch)) {
-		case 'A': case 'E': case 'I': case 'O': case 'U':
-			counter++;
-			break;
+	printf("Your sentence contains %d vowels.\n", count_vowels(sentence));
+
+	return 0;
+}
+
+
+static int count_vowels(const char *sentence)
+{
+	int n = 0;
+
+	while (*sentence) {
+		switch(tolower(*sentence++)) {
+			case 'a': case 'e': case 'i': case 'o': case 'u':
+				n++;
+				break;
 		}
 	}
 
-	printf("Your sentence contains %d vowels.\n", counter);
-
-	return 0;
+	return n;
 }
