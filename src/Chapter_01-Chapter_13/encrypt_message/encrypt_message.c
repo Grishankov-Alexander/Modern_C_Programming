@@ -7,76 +7,56 @@
 
 #include <stdio.h>
 #include <ctype.h>
+#include <stdbool.h>
+#include <string.h>
 
 
 #define MAX_SIZE 80
 #define NUM_LETTERS 26
-#define INPUT_TERMINATOR '\n'
+
+
+static char *encrypt_caesar(char *msg, int shift);
 
 
 int main(void)
 {
-	int i;
+	char msg[MAX_SIZE];
 	int shift;
-	char low_letters[NUM_LETTERS], up_letters[NUM_LETTERS];
-	char input[MAX_SIZE], output[MAX_SIZE];
 
-	// Populate arrays with alphabet letters
-	for (i = 0; i < NUM_LETTERS; i++)
-		low_letters[i] = 'a' + (char) i;
-	for (i = 0; i < NUM_LETTERS; i++)
-		up_letters[i] = 'A' + (char) i;
+	printf("Enter message to be encrypted: ");
+	fgets(msg, sizeof msg, stdin);
+	// Get rid of \n
+	if (strlen(msg))
+		*(msg + strlen(msg) - 1) = 0;
+	printf("Enter shift value: ");
+	scanf("%d", &shift);
 
-	printf("Enter a message: ");
-	// Store input message
-	for (i = 0; i < MAX_SIZE; i++) {
-		input[i] = (char) getchar();
-		if (input[i] == INPUT_TERMINATOR)
-			break;
-	}
-
-	printf("Enter shift ammount: ");
-	(void)scanf("%d", &shift);
-
-	// Populate output array with encrypted letters
-	for (i = 0; i < MAX_SIZE; i++) {
-		if (input[i] == INPUT_TERMINATOR) {
-			output[i] = input[i];
-			break;
-		}
-		// Encrypt lowercase letter
-		else if (
-			0 <= input[i] - low_letters[0]
-			&& input[i] - low_letters[0] < NUM_LETTERS
-		)
-		{
-			output[i] = (input[i] - low_letters[0] + shift)
-				% NUM_LETTERS + low_letters[0];
-		}
-		// Encrypt uppercase letter
-		else if (
-			0 <= input[i] - up_letters[0]
-			&& input[i] - up_letters[0] < NUM_LETTERS
-		)
-		{
-			output[i] = (input[i] - up_letters[0] + shift)
-				% NUM_LETTERS + up_letters[0];
-		}
-		// Store unencrypted
-		else
-			output[i] = input[i];
-	}
-
-	// Print resulting output
-	printf("Encrypted message: ");
-	for (i = 0; i < MAX_SIZE; i++) {
-		if (output[i] == INPUT_TERMINATOR)
-			break;
-		else
-			putchar(output[i]);
-	}
-
-	printf("\n");
+	printf("Caesar encrypted message: %s\n", encrypt_caesar(msg, shift));
 
 	return 0;
+}
+
+
+static char *encrypt_caesar(char *msg, int shift)
+{
+	char *p;
+	bool is_lower;
+	int shifted_val;
+
+	for (p = msg; *p; p++) {
+		is_lower = false;
+		// Continue if *p isn't a letter
+		if (!isalpha(*p))
+			continue;
+		// Determine if *p is uppercase or lowercase
+		else if (*p == tolower(*p))
+			is_lower = true;
+		shifted_val = (is_lower ? *p - 'a' : *p - 'A') + shift;
+		shifted_val %= NUM_LETTERS;
+		if (shifted_val < 0)
+			shifted_val += NUM_LETTERS;
+		*p = is_lower ? shifted_val + 'a' : shifted_val + 'A';
+	}
+
+	return msg;
 }
