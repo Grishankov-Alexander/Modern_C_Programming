@@ -11,9 +11,10 @@
 
 
 #define STACK_SIZE 10
+#define EXPR_STRING_SIZE 30
 
 
-typedef char number;
+typedef int number;
 
 
 static number stack[STACK_SIZE];
@@ -31,9 +32,15 @@ static bool is_full(void);
 static void stack_underflow(void);
 static void stack_overflow(void);
 
+// Programming project 15 from chapter 13 requires this
+int eval_rpn_expr(const char* expr);
+// Read at most n - 1 chars to s (exclude newline)
+static int readln(char *s, int n);
+
 
 int main(void)
 {
+	/* Worked all right but chapter 13 requires some change
 	// left operand, right operand
 	char lo, ro;
 	char ch;
@@ -47,20 +54,23 @@ int main(void)
 		if ('0' <= ch && ch <= '9') {
 			push(ch - '0');
 			continue;
-		} else if (ch == '+' || ch == '-' || ch == '/' || ch == '*')
-			ro = pop(), lo = pop();
+		}
 
 		switch (ch) {
 			case '+':
+				ro = pop(), lo = pop();
 				push(lo + ro);
 				break;
 			case '-':
+				ro = pop(), lo = pop();
 				push(lo - ro);
 				break;
 			case '*':
+				ro = pop(), lo = pop();
 				push(lo * ro);
 				break;
 			case '/':
+				ro = pop(), lo = pop();
 				push(lo / ro);
 				break;
 			case '=':
@@ -74,6 +84,16 @@ int main(void)
 				return 0;
 		}
 	}
+	*/
+
+	char expr[EXPR_STRING_SIZE];
+
+	printf("Enter RPN expression: ");
+	readln(expr, sizeof expr);
+
+	printf("Result: %d\n", eval_rpn_expr(expr));
+
+	return 0;
 }
 
 
@@ -122,4 +142,56 @@ static void stack_overflow(void)
 {
 	printf("Stack overflow: too much operands!\n");
 	exit(EXIT_FAILURE);
+}
+
+
+int eval_rpn_expr(const char* expr)
+{
+	// Keep track on number of characters read by scanf
+	int num_read;
+	int n, lo, ro;
+
+	// Clear stack
+	clear();
+
+	while (*expr) {
+		if (sscanf(expr, "%d%n", &n, &num_read)) {
+			push(n);
+			expr += num_read;
+			continue;
+		}
+		switch (*expr++) {
+			case '+':	ro = pop(), lo = pop(), push(lo + ro); break;
+			case '-':	ro = pop(), lo = pop(), push(lo - ro); break;
+			case '*':	ro = pop(), lo = pop(), push(lo * ro); break;
+			case '/':
+					ro = pop(), lo = pop();
+					if (!ro) {
+						printf("Error: Division by zero\n");
+						exit(EXIT_FAILURE);
+					}
+					push(lo / ro); break;
+			case '=':	return pop();
+			default:	break;
+		}
+	}
+
+	return 0;
+}
+
+
+static int readln(char *s, int n)
+{
+	char c, *p;
+
+	for (p = s; n > 1; n--, p++) {
+		c = getchar();
+		if (c == '\n')
+			break;
+		*p = c;
+	}
+
+	*p = 0;
+
+	return p - s;
 }
