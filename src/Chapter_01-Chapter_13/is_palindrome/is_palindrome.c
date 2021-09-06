@@ -36,7 +36,6 @@ int main(void)
 
 bool is_palindrome(char a[], int n)
 {
-	bool is_pal = true;
 	char *p = a + n - 1;
 
 	while (a < p) {
@@ -46,14 +45,12 @@ bool is_palindrome(char a[], int n)
 		} else if (!isalpha(*p)) {
 			p--;
 			continue;
-		} else if (tolower(*a) != tolower(*p)) {
-			is_pal = false;
-			break;
-		}
+		} else if (tolower(*a) != tolower(*p))
+			return false;
 		a++, p--;
 	}
 
-	return is_pal;
+	return true;
 }
 
 
