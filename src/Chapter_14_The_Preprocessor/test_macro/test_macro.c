@@ -4,6 +4,7 @@
 
 
 #include <stdio.h>
+#include <string.h>
 
 
 // Simple macros
@@ -21,6 +22,8 @@
 
 
 // The # unary macro operator
+#define PRINT_TOPIC_NAME(s) \
+	printf("\n\n" s "\n" "----------" "\n") /* Print topic header */
 #define PRINT_INT(x) printf(#x " = %d\n", x) /* prints int macro parameter */
 #define STRINGIDIZE(x) #x /* Creates a string from macro parameter */
 #define PRINT_STR(s) printf("%s", #s) /* Prints macro parameter as a string */
@@ -67,6 +70,31 @@
              */
 
 
+// Predefined macros
+#define PRINT_COMPILATION_INFO \
+	printf("Program was compiled on %s at %s\n", __DATE__, __TIME__);
+#define TEST_ZERO(x) \
+	if (!(x)) \
+		printf("Divizion by zero in file %s on line %d\n", \
+			__FILE__, __LINE__)
+
+
+// Empty Macro arguments
+#define ADD(x, y) (x + y)
+#define MAKE_STR(x) #x
+#define JOIN_TOKENS(x, y) x##y
+
+
+// Macros with a variable number of arguments
+#define PRINTF(...) printf(__VA_ARGS__)
+#define IF_FALSE(condition, ...) \
+	((condition) \
+	 ? fputs(#condition "\n", stdout) \
+	 : __VA_ARGS__) /* Evaluate expressions that follow condition
+			     if condition is false
+			     */
+
+
 // Defines a function double_max and type double_max_t
 GENERIC_MAX(double);
 
@@ -75,11 +103,7 @@ int main(void)
 {
 	// Simple macros
 	{
-		printf(
-			"\n\n"
-			"Simple macros"
-			"\n----------\n"
-		);
+		PRINT_TOPIC_NAME("Simple macros");
 
 		printf("%s\n", DOUBLE_QUOTE CONTINUATION_TEST DOUBLE_QUOTE);
 	}
@@ -87,11 +111,7 @@ int main(void)
 
 	// Parameterized macros
 	{
-		printf(
-			"\n\n"
-			"Parameterized macros"
-			"\n----------\n"
-		);
+		PRINT_TOPIC_NAME("Parameterized macros");
 
 		printf("%d\n", MAX(2 + 3, 3 + 3));
 		printf("%d, %d\n", IS_EVEN(1), IS_EVEN(2));
@@ -101,11 +121,7 @@ int main(void)
 
 	// The # operator - unary
 	{
-		printf(
-			"\n\n"
-			"The # unary operator"
-			"\n----------\n"
-		);
+		PRINT_TOPIC_NAME("The # unary operator");
 
 		PRINT_INT(5 / 3);
 		printf("%s\n", STRINGIDIZE(1 + 2 + 3 + 4));
@@ -115,11 +131,7 @@ int main(void)
 
 	// The ## operator - binary
 	{
-		printf(
-			"\n\n"
-			"The ## binary operator"
-			"\n----------\n"
-		);
+		PRINT_TOPIC_NAME("The ## binary operator");
 
 		int MK_ID(1) = 33, MK_ID(2) = 22, MK_ID(3) = 11;
 		printf("i1 = %d, i2 = %d, i3 = %d\n",
@@ -131,16 +143,54 @@ int main(void)
 
 	// Creating longer macros
 	{
-		printf(
-			"\n\n"
-			"Createing longer macros"
-			"\n----------\n"
-		);
+		PRINT_TOPIC_NAME("Createing longer macros");
 
-		char a[10];
-		ECHO(a);
-		COMPOUND_ECHO(a);
-		COMPOUND_DOWHILE_ECHO(a);
+		//char a[10];
+		//ECHO(a);
+		//COMPOUND_ECHO(a);
+		//COMPOUND_DOWHILE_ECHO(a);
+	}
+
+
+	// Predefined macros
+	{
+		PRINT_TOPIC_NAME("Predefined macros");
+
+		PRINT_COMPILATION_INFO;
+		int j = 0;
+		TEST_ZERO(j);
+#ifdef __STDC__
+		printf("__STDC__ = %d\n", __STDC__);
+#endif
+	}
+
+
+	// Empty macro arguments
+	{
+		PRINT_TOPIC_NAME("Empty Macro Arguments");
+
+		int n = ADD(2, 3);
+		printf("%d\n", n);
+		n = ADD( , 3);
+		printf("%d\n", n);
+		char a[] = MAKE_STR(Hello world!\n);
+		printf("%s", a);
+		strcpy(a, MAKE_STR());
+		printf("%s", a);
+		int JOIN_TOKENS(var, _1) = 1;
+		int JOIN_TOKENS(var_2, ) = 2;
+		printf("%d\n", var_1 - var_2);
+	}
+
+
+	// Macros with a variable number of arguments
+	{
+		PRINT_TOPIC_NAME("Macros with a variable number of arguments");
+
+		PRINTF("This %s %s %s %s\n", "works", "same", "as", "printf");
+		int x = 5, y = 3;
+		IF_FALSE(x > y, printf("y >= x\n"));
+		IF_FALSE(y > x, printf("%d <= %d\n", y, x));
 	}
 
 	return 0;
