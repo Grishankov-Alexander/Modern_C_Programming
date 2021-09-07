@@ -95,6 +95,11 @@
 			     */
 
 
+// The __func__identifier
+#define PRINT_FUNC_NAME printf("Function name: %s\n", __func__)
+#define NOTIFY_FUNC_RETURN(x) printf("Function %s returns %s.\n", __func__, #x)
+
+
 // Defines a function double_max and type double_max_t
 GENERIC_MAX(double);
 
@@ -191,6 +196,15 @@ int main(void)
 		int x = 5, y = 3;
 		IF_FALSE(x > y, printf("y >= x\n"));
 		IF_FALSE(y > x, printf("%d <= %d\n", y, x));
+	}
+
+
+	// The __func__ identifier
+	{
+		PRINT_TOPIC_NAME("The __func__ identifier");
+
+		PRINT_FUNC_NAME;
+		NOTIFY_FUNC_RETURN(0);
 	}
 
 	return 0;
