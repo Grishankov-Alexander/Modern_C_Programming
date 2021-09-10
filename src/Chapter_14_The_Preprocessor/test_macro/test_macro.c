@@ -233,7 +233,7 @@ int main(void)
 		printf("abc = %d\n", abc);
 
 		/*
-		 * Idea of the following example:
+		 * Ideas of the following example:
 		 * 1) Macro can't call itself recursively
 		 * 2) If Macro "A" called macro "B", and macro "B" contains
 		 * 	calls to macro "A", calls from "B" to "A" will not expand
@@ -249,6 +249,24 @@ int main(void)
 #		define PRINT_BAR PRINT_FOO "BAR" PRINT_FOO
 #		define BAZ TO_STR(PRINT_FOO)
 		printf("BAZ = %s\n", BAZ);
+
+		/* Ideas of the following example:
+		 * 1) #define MACRO_A is not the same as #define MACRO_A()
+		 * 2) We can even define macro "A" to call macro "B" with
+		 * 	specified parameters. How awesome is it ?
+		 * 3) Can we win obscure C tournament ?
+		 *
+			 * CALL_MACRO(TO_STR, TO_STR(Hello world!))
+			 * -> CONCAT(TO_STR, EMPTY)(TO_STR(Hello world!))
+			 * -> TO_STR("Hello world!")
+			 * -> "\"Hello world!\""
+		*/
+#		define EMPTY
+#		define CONCANTENATE(x, y)	x##y
+#		define CONCAT(x, y)		CONCANTENATE(x, y)
+#		define CALL_MACRO(m, ...)	CONCAT(m, EMPTY)(__VA_ARGS__)
+		printf("%s\n", CALL_MACRO(TO_STR, Hello world!));
+		printf("%s\n", CALL_MACRO(TO_STR, TO_STR(Hello world!)));
 	}
 
 	return 0;
