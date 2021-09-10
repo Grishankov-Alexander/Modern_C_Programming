@@ -207,5 +207,49 @@ int main(void)
 		NOTIFY_FUNC_RETURN(0);
 	}
 
+
+	// Advanced concepts
+	{
+		PRINT_TOPIC_NAME("Advanced concepts");
+
+		/*
+		 * Idea of the following example:
+		 * When macro expands, it evaluates inner macros first if they exist
+		 *
+			* TO_STR(abc TO_STR(def))
+			* -> STRINGIZE(abc TO_STR(def))
+			* -> STRINGIZE(abc STRINGIZE(def))
+			* -> STRINGIZE(abc "def")
+			* -> "abc \"def\""
+		*/
+#		define STRINGIZE(x) #x
+#		define TO_STR(x) STRINGIZE(x)
+		printf("TO_STR(abc TO_STR(def)) = %s\n", TO_STR(abc TO_STR(def)));
+
+		/* Same thing works for token concat */
+#		define TOKENIZE(x, y) x##y
+#		define CONCAT_TOKENS(x, y) TOKENIZE(x, y)
+		int CONCAT_TOKENS(a, CONCAT_TOKENS(b, c)) = (unsigned) ~0 >> 1;
+		printf("abc = %d\n", abc);
+
+		/*
+		 * Idea of the following example:
+		 * 1) Macro can't call itself recursively
+		 * 2) If Macro "A" called macro "B", and macro "B" contains
+		 * 	calls to macro "A", calls from "B" to "A" will not expand
+		 *
+			* BAZ
+			* -> TO_STR(PRINT_FOO)
+			* -> TO_STR(PRINT_BAR "FOO" PRINT_BAR PRINT_FOO)
+			* -> TO_STR(PRINT_FOO "BAR" PRINT_FOO "FOO" PRINT_BAR PRINT_FOO)
+			* -> TO_STR(PRINT_FOO "BAR" PRINT_FOO "FOO" PRINT_FOO "BAR" PRINT_FOO PRINT_FOO)
+			* -> "PRINT_FOO \"BAR\" PRINT_FOO \"FOO\" PRINT_FOO \"BAR\" PRINT_FOO PRINT_FOO"
+		*/
+#		define PRINT_FOO PRINT_BAR "FOO" PRINT_BAR PRINT_FOO
+#		define PRINT_BAR PRINT_FOO "BAR" PRINT_FOO
+#		define BAZ TO_STR(PRINT_FOO)
+		printf("BAZ = %s\n", BAZ);
+	}
+
 	return 0;
 }
