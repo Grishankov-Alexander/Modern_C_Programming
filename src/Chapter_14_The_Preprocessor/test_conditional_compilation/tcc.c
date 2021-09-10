@@ -63,20 +63,20 @@ int main(void)
 		PRINT_TOPIC("#elif and #else");
 
 #define DEBUG_MODE_3
-
 #ifdef NO_DEBUG
+	/* ... */
 #else
-	#if defined DEBUG_MODE_1
+#	if defined DEBUG_MODE_1
 		printf("DEBUG mode: 1\n");
-	#elif defined DEBUG_MODE_3
-		#undef DEBUG_MODE_3
-		#define DEBUG_MODE_2
+#	elif defined DEBUG_MODE_3
+#		undef DEBUG_MODE_3
+#		define DEBUG_MODE_2
 		printf("Disabled DEBUG mode: 3\n");
 		printf("Enabled DEBUG mode: 2\n");
-	#elif !defined DEBUG_MODE_2
-		#define DEBUG_MODE_2
+#	elif !defined DEBUG_MODE_2
+#		define DEBUG_MODE_2
 		printf("Enabled DEBUG mode: 2\n");
-	#endif /* #if defined DEBUG_MODE_1 */
+#	endif /* #if defined DEBUG_MODE_1 */
 #endif /* #ifdef NO_DEBUG */
 	}
 
@@ -85,17 +85,15 @@ int main(void)
 		PRINT_TOPIC("#error, #line and #pragma");
 #define OS_LINUX
 #ifdef OS_WIN
-#
-#
+	/* ... */
 #elif defined OS_LINUX
-#
-#
+	/* ... */
 #else
-#error OS not supported
+	#error OS not supported
 #endif
 #undef OS_LINUX
 
-#line 95 "foo.c"
+#line __LINE__ "foo.c"
 		printf("Filename: %s, Line: %d\n", __FILE__, __LINE__);
 
 /* Pragma directive to print specified message on compilation */
