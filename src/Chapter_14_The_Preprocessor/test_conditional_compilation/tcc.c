@@ -22,7 +22,7 @@ int main(void)
 #define DEBUG 1
 #if DEBUG
 		printf("DEBUG = %d\n", DEBUG);
-#endif
+#endif /* #if DEBUG */
 
 #undef DEBUG
 #if !DEBUG
@@ -78,7 +78,33 @@ int main(void)
 		printf("Enabled DEBUG mode: 2\n");
 	#endif /* #if defined DEBUG_MODE_1 */
 #endif /* #ifdef NO_DEBUG */
+	}
 
+
+	{
+		PRINT_TOPIC("#error, #line and #pragma");
+#define OS_LINUX
+#ifdef OS_WIN
+#
+#
+#elif defined OS_LINUX
+#
+#
+#else
+#error OS not supported
+#endif
+#undef OS_LINUX
+
+#line 95 "foo.c"
+		printf("Filename: %s, Line: %d\n", __FILE__, __LINE__);
+
+/* Pragma directive to print specified message on compilation */
+#pragma message "Compiling file " __FILE__ 
+		/* Same as above but using _Pragma operator */
+		_Pragma("message \"Compiling file \" __FILE__");
+#define DO_PRAGMA(x) _Pragma(#x)
+		/* Same but using macro expansion */
+		DO_PRAGMA(message "Compiling file " __FILE__);
 	}
 
 
