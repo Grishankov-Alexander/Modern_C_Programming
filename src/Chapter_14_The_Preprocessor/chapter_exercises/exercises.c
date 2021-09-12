@@ -81,6 +81,31 @@ int main(void)
 	*/
 	printf("%s\n", LINE_FILE);
 
+#	define CHECK(x, y, n) \
+		(0 <= (x) && 0 <= (y) \
+		&& (x) < n && (y) < n)
+	printf("CHECK(0, 5, 6) = %d\n", CHECK(0, 5, 6));
+
+#	define MAX(x, y) ((x) > (y) ? (x) : (y))
+#	define MIN(x, y) ((x) < (y) ? (x) : (y))
+#	define MEDIAN(x, y, z) ((x) > (z) && (y) > (z) ? MIN(x, y) : (MIN(MAX(x, y), z)))
+	printf("MEDIAN(1, 3, 5) = %d\n", MEDIAN(1, 3, 5));
+
+#	define POW2(x) ((x) * (x))
+#	define POW3(x) (POW2(x) * (x))
+#	define POW4(x) (POW2(x) * POW2(x))
+#	define POW5(x) (POW3(x) * POW2(x))
+#	define POLYNOMIAL(x) (3 * POW5(x) + 2 * POW4(x)	- 5 * POW3(x) - POW2(x) + 7 * (x) - 6)
+	printf("POLYNOMIAL(3) = %d\n", POLYNOMIAL(3));
+
+#	define ERROR(fmts, ...) fprintf(stderr, fmts, __VA_ARGS__)
+	ERROR("Out of range. Index = %d\n", 5);
+
+#	define PRAGMA(...) _Pragma(#__VA_ARGS__)
+#	define WRITE_COMPILE_MESSAGE(...) PRAGMA(message #__VA_ARGS__)
+	WRITE_COMPILE_MESSAGE(Hello, world)
+
+
 	return 0;
 }
 
