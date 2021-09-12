@@ -53,5 +53,17 @@ int main(void)
 	}
 
 
+	/* Test topic */
+	{
+		PRINT_TOPIC("Test topic");
+
+#		define TEST
+		/*
+			 * Test
+		*/
+		printf("%s\n", MAKE_STR(TEST));
+	}
+
+
 	return 0;
 }
