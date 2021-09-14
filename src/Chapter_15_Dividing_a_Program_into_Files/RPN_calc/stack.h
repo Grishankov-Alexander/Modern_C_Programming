@@ -3,6 +3,11 @@
 */
 
 
+#ifndef __STDC__
+#error ANSI compiler required
+#endif /* #ifndef __STDC__ */
+
+
 #ifndef STACK_H
 #define STACK_H
 

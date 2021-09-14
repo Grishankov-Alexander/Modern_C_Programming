@@ -18,7 +18,7 @@ int main(void)
 	char c;
 
 	printf("Enter RPN expression: ");
-	while ((c = getchar())) {
+	while ((c = getchar()) != EOF) {
 		if (isspace(c))
 			continue;
 		else if (c != '+' && c != '-' && c != '*' && c != '/' && c != '=') {
