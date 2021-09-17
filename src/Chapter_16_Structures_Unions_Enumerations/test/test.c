@@ -4,6 +4,7 @@
 
 
 #include <stdio.h>
+#include <string.h>
 
 
 #define PRINT_TOPIC(...) printf("\n\n" #__VA_ARGS__ "\n----------\n")
@@ -115,14 +116,45 @@ int main(void)
 		};
 
 		/* I did something terrible :) But it works */
-		struct student algri = {
-			.name = {.first_name = "Alexander", .last_name = "Grishankov"},
+		struct student sam_tally = {
+			.name = {.first_name = "Samuel", .last_name = "Tally"},
 			.measures = {.id = 777, .age = 170, .height = 184},
 			.class_mates = (const struct student[]) {
 				{.name = {"Jon", "Snow"}},
 				{.name = {"Arya", "Stark"}}
 			}
 		};
+
+		sam_tally.name.first_name = "Sam";
+
+		printf("First name: %s\nLast name: %s\n",
+			sam_tally.name.first_name, sam_tally.name.last_name);
+	}
+
+
+	// Array of structures
+	{
+		PRINT_TOPIC(Array of structures);
+
+		struct part {
+			int number;
+			char name[SIZE];
+			int on_hand;
+		};
+
+#		define PRINT_PART(part) \
+			printf("struct part " #part " {\n" \
+				"\tnumber = %d\n" "\tname = %s\n" "\ton_hand = %d\n" \
+				"}\n", (part).number, (part).name, (part).on_hand)
+
+		struct part inventory[SIZE] = {
+			{1, "HDD", 30}, {2, "SSD", 30},
+			[2].number = 3, [2].name[0] = '\0', [2].on_hand = 0
+		};
+
+		strcpy(inventory[2].name, "CPU");
+		inventory[2].on_hand = 30;
+		PRINT_PART(inventory[2]);
 	}
 
 	return 0;
