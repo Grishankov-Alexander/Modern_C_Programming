@@ -5,8 +5,17 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 
 
+/* Prints memory dump of an object */
+#define PRINT_MEM(obj) \
+	printf(#obj " dump:"); \
+	for (char *p = (char *) &(obj); p < (char *) &(obj) + sizeof (obj); p++) { \
+		printf("%3.2x", *p & 0xff); \
+	} \
+	printf("\n")
+#define INT64_TO_DOUBLE(i64) *((double *) &(i64)) 
 #define PRINT_TOPIC(...) printf("\n\n" #__VA_ARGS__ "\n----------\n")
 #define SIZE 30
 
@@ -155,6 +164,66 @@ int main(void)
 		strcpy(inventory[2].name, "CPU");
 		inventory[2].on_hand = 30;
 		PRINT_PART(inventory[2]);
+	}
+
+
+	// Unions
+	{
+		PRINT_TOPIC(Unions);
+
+		union {
+			int a;
+			double b;
+		} u1 = {.a = 0xffffffff};
+
+		printf("sizeof u1: %zu\n", sizeof u1);
+		PRINT_MEM(u1);
+		printf("u1.a = %d\n", u1.a);
+		printf("u1.b = %lg\n", u1.b);
+		u1.a = 0xff;
+		PRINT_MEM(u1);
+		printf("u1.a = %d\n", u1.a);
+		printf("u1.b = %lg\n", u1.b);
+
+		union {
+			struct {
+				int a;
+				int b;
+			};
+
+			double d;
+		} u2 = { {0xa, 0xb} };
+
+		printf("\nsizeof u2: %zu\n", sizeof u2);
+		PRINT_MEM(u2);
+		u2.d = 9.99;
+		PRINT_MEM(u2);
+
+		struct {
+			union {
+				char a;
+				int b;
+			};
+		} u3 = {.a = 0x65};
+
+		printf("\nsizeof u3: %zu\n", sizeof u3);
+		PRINT_MEM(u3);
+		u3.b = 0xabcd;
+		PRINT_MEM(u3);
+
+		struct {
+			union {
+				struct {
+					int x;
+					double y;
+				};
+			};
+		} vector = {{{0x80000000, 3.14159265}}};
+		printf("\nsizeof vector: %zu\n", sizeof vector);
+		PRINT_MEM(vector);
+		int64_t i = 0xabcd;
+		vector.y = INT64_TO_DOUBLE(i);
+		PRINT_MEM(vector);
 	}
 
 	return 0;
