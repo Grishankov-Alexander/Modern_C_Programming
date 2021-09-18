@@ -217,13 +217,16 @@ int main(void)
 					int x;
 					double y;
 				};
+
+				int ia[4];
 			};
-		} vector = {{{0x80000000, 3.14159265}}};
-		printf("\nsizeof vector: %zu\n", sizeof vector);
-		PRINT_MEM(vector);
+		} u4 = {{{0x80000000, 3.14159265}}};
+		printf("\nsizeof u4: %zu\n", sizeof u4);
+		PRINT_MEM(u4);
+		u4.ia[1] = -1;
 		int64_t i = 0xabcd;
-		vector.y = INT64_TO_DOUBLE(i);
-		PRINT_MEM(vector);
+		u4.y = INT64_TO_DOUBLE(i);
+		PRINT_MEM(u4);
 	}
 
 	return 0;
