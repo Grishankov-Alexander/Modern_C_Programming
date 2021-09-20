@@ -227,6 +227,72 @@ int main(void)
 		int64_t i = 0xabcd;
 		u4.y = INT64_TO_DOUBLE(i);
 		PRINT_MEM(u4);
+
+		/*
+		 * Mixed data structures and union tag fields
+		*/
+#		define INT_KIND 0
+#		define DOUBLE_KIND 1
+		union Number {
+			int i;
+			double d;
+		};
+
+		typedef struct {
+			int kind;
+			union Number u;
+		} Number;
+
+
+		printf("\nSizeof Number: %zu\n", sizeof(Number));
+		Number numbers[SIZE] = {
+			{INT_KIND, .u.i = 0x1234},
+			{INT_KIND, .u.i = 0xffffffff}
+		};
+		PRINT_MEM(numbers[0]);
+		PRINT_MEM(numbers[1]);
+		uint64_t tmp = 0x0123456789abcdef;
+		numbers[1] = (Number) {DOUBLE_KIND, .u.d = INT64_TO_DOUBLE(tmp)};
+		PRINT_MEM(numbers[1]);
+
+		/*
+		 * Using unions to save space
+		*/
+#		define BOOK_KIND 0x0U
+#		define SHIRT_KIND 0x1U
+		struct catalog_item {
+			uint32_t id;
+			uint32_t kind;
+			double price;
+			union {
+				struct {
+					char name[SIZE];
+					int num_pages;
+				} book;
+				struct {
+					char brand[SIZE];
+					int size;
+				} shirt;
+			} item;
+		} book1 = {
+			0x1U,
+			BOOK_KIND,
+			INT64_TO_DOUBLE(tmp),
+			.item.book.name = "Song of Ice and Fire",
+			.item.book.num_pages = 399
+		};
+
+		printf("\nSizeof book1: %zu\n", sizeof book1);
+		printf("Sizeof book1.item: %zu\n", sizeof book1.item);
+		PRINT_MEM(book1);
+	}
+
+
+	// Enumerations
+	{
+		PRINT_TOPIC(Enumerations);
+
+
 	}
 
 	return 0;
