@@ -292,7 +292,53 @@ int main(void)
 	{
 		PRINT_TOPIC(Enumerations);
 
+		// enum without a tag
+		{
+			enum {CLUBS, DIAMONDS, HEARTS, SPADES} s1;
 
+			s1 = CLUBS;
+		}
+
+		// enum with a tag and typedef
+		{
+			typedef enum suit {CLUBS, DIAMONDS, HEARTS, SPADES} Suit;
+			typedef enum {FALSE, TRUE} Bool;
+
+			Bool b = TRUE;
+			Suit s1 = HEARTS;
+			enum suit s2 = DIAMONDS;
+		}
+
+		// Enums as integers 
+		{
+			int i;
+			enum mixed_numbers {
+				ZERO,
+				TWENTY_FIVE = 25,
+				TWENTY_SIX,
+				TEN = 10,
+				FIVE = 5
+			} number;
+
+			i = FIVE;
+			number = 10;
+			number = TWENTY_SIX;
+		}
+
+		// Enums as tag fields
+		{
+#			undef INT_KIND
+#			undef DOUBLE_KIND
+			struct number {
+				enum {INT_KIND, DOUBLE_KIND} kind;
+				union {
+					int i;
+					double d;
+				} u;
+			} n = {DOUBLE_KIND, .u.d = 3.14262869e+17};
+
+			PRINT_MEM(n);
+		}
 	}
 
 	return 0;
