@@ -4,6 +4,7 @@
 
 
 #include <stdio.h>
+#include <stdbool.h>
 
 
 #define PRINT_TOPIC(...) \
@@ -36,6 +37,12 @@ struct time {
 	int s;
 };
 
+struct color {
+	unsigned char red;
+	unsigned char green;
+	unsigned char blue;
+};
+
 
 // Returns struct complex created from real r and imaginary i
 struct complex make_complex(double r, double i);
@@ -48,6 +55,12 @@ int datecmp(const struct date *d1, const struct date *d2);
 // Split into struct with members - hours, minutes, seconds
 struct time split_time(long long total_seconds);
 
+// Create color from rgb
+struct color make_color(unsigned char r, unsigned char g, unsigned char b);
+bool equal_color(struct color c1, struct color c2);
+struct color darker(struct color c);
+struct color brighter(struct color c);
+void print_color(struct color c);
 
 
 int main(void)
@@ -96,7 +109,16 @@ int main(void)
 
 		struct time t1 = split_time(90129);
 		printf("%.2d:%.2d:%.2d\n", t1.h, t1.m ,t1.s);
+	}
 
+
+	// Colors
+	{
+		PRINT_TOPIC(Colors);
+
+		struct color c = {255, 0, 148};
+		c = brighter(c);
+		print_color(c);
 	}
 
 
@@ -167,4 +189,57 @@ struct time split_time(long long total_seconds)
 		.m = (total_seconds % 3600) / 60,
 		.s = (total_seconds % 60),
 	};
+}
+
+
+struct color make_color(unsigned char r, unsigned char g, unsigned char b)
+{
+	return (struct color) {.red = r, .green = g, .blue = b};
+}
+
+
+bool equal_color(struct color c1, struct color c2)
+{
+	return c1.red == c2.red
+		&& c1.green == c2.green
+		&& c1.blue == c2.blue
+		? true : false;
+}
+
+
+struct color darker(struct color c)
+{
+	return (struct color) {
+		.red = c.red * 0.7,
+		.green = c.green * 0.7,
+		.blue = c.blue * 0.7,
+	};
+}
+
+
+struct color brighter(struct color c)
+{
+	unsigned char r = c.red, g = c.green, b = c.blue;
+
+	if (r == g && g == b && b == 0)
+		return make_color(3, 3, 3);
+
+	if (0 < r && r < 3)
+		r = 3;
+	if (0 < g && g < 3)
+		g = 3;
+	if (0 < b && b < 3)
+		b = 3;
+
+	r = r / 0.7 > 255 ? 255 : r / 0.7;
+	g = g / 0.7 > 255 ? 255 : g / 0.7;
+	b = b / 0.7 > 255 ? 255 : b / 0.7;
+
+	return make_color(r, g, b);
+}
+
+
+void print_color(struct color c)
+{
+	printf(" R   G   B \n" "%-4.3d%-4.3d%-4.3d\n", c.red, c.green, c.blue);
 }
