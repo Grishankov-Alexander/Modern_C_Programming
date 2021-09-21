@@ -49,6 +49,7 @@ int datecmp(const struct date *d1, const struct date *d2);
 struct time split_time(long long total_seconds);
 
 
+
 int main(void)
 {
 	// Q & A
@@ -95,7 +96,9 @@ int main(void)
 
 		struct time t1 = split_time(90129);
 		printf("%.2d:%.2d:%.2d\n", t1.h, t1.m ,t1.s);
+
 	}
+
 
 	return 0;
 }
