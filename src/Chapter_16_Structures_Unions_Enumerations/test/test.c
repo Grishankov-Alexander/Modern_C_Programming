@@ -7,7 +7,13 @@
 #include <string.h>
 #include <stdint.h>
 
-
+/* Very nice macro statement.
+ * Prints binary representation of an object passed as an argument */
+#define PRINT_BINARY(obj) \
+	for (int i = sizeof(obj) * 8 - 1; i >= 0; i--) { \
+		printf("%d", (obj) >> i & 1); \
+		if (i % 8 == 0) printf("\x20"); \
+	} printf("\xA")
 /* Prints memory dump of an object */
 #define PRINT_MEM(obj) \
 	printf(#obj " dump:"); \
@@ -18,6 +24,7 @@
 #define INT64_TO_DOUBLE(i64) *((double *) &(i64)) 
 #define PRINT_TOPIC(...) printf("\n\n" #__VA_ARGS__ "\n----------\n")
 #define SIZE 30
+
 
 struct part {
 	char *name;
@@ -339,10 +346,25 @@ int main(void)
 
 			PRINT_MEM(n);
 		}
+
+		// Enum flags
+		{
+			PRINT_TOPIC(Enum Flags);
+
+			enum flags {
+				READ = 1, WRITE = 1 << 1, APPEND = 1 << 2,
+			};
+
+			printf("flags = ");
+			PRINT_BINARY(READ | WRITE | APPEND);
+		}
 	}
 
 	return 0;
 }
+
+
+
 
 
 struct part create_part(char *name, int number, int quantity)
