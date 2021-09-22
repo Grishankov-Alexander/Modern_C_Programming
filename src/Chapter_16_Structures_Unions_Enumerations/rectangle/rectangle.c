@@ -39,7 +39,7 @@ int main(void)
 	print_rectangle(&r);
 	printf("Area: %d\n", area(&r));
 	printf("Center point: %d, %d\n", center(&r).x, center(&r).y);
-	printf("%d\n", within(&r, (struct point) {-3, 1,}));
+	printf("%d\n\n", within(&r, (struct point) {-3, 1,}));
 	move(&r, 4, 4);
 	print_rectangle(&r);
 }
