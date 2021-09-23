@@ -442,6 +442,33 @@ int main(void)
 			printf("sizeof s.u = %zu\n", sizeof s.u);
 			PRINT_MEM(s);
 		}
+
+		// Chessboard
+		{
+			PRINT_TOPIC(Chessboard);
+
+			typedef enum {
+				EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING
+			} Piece;
+
+			typedef enum {BLACK, WHITE} Color;
+
+			typedef struct {
+				Piece p;
+				Color c;
+			} Square;
+
+			Square board[8][8] = {
+				[0] = {{ROOK}, {KNIGHT}, {BISHOP}, {QUEEN},
+					{KING}, {BISHOP}, {KNIGHT}, {ROOK}},
+				[1] = {{PAWN}, {PAWN}, {PAWN}, {PAWN},
+					{PAWN}, {PAWN}, {PAWN}, {PAWN}},
+				[6] = {{PAWN, WHITE}, {PAWN, WHITE}, {PAWN, WHITE}, {PAWN, WHITE},
+					{PAWN, WHITE}, {PAWN, WHITE}, {PAWN, WHITE}, {PAWN, WHITE}},
+				[7] = {{ROOK, WHITE}, {KNIGHT, WHITE}, {BISHOP, WHITE}, {QUEEN, WHITE},
+					{KING, WHITE}, {BISHOP, WHITE}, {KNIGHT, WHITE}, {ROOK, WHITE}},
+			};
+		}
 	}
 
 
