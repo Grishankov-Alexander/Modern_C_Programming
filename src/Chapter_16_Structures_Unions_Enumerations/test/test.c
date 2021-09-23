@@ -14,6 +14,9 @@
 		printf("%d", (obj) >> i & 1); \
 		if (i % 8 == 0) printf("\x20"); \
 	} printf("\xA")
+/* Converts literal value to type */
+#define VAL_TO_TYPE(val, type) \
+	*(type *) (__typeof__(val)[]) { val, }
 /* Prints memory dump of an object */
 #define PRINT_MEM(obj) \
 	printf(#obj " dump:"); \
@@ -358,7 +361,89 @@ int main(void)
 			printf("flags = ");
 			PRINT_BINARY(READ | WRITE | APPEND);
 		}
+
+
+		// Struct paddings
+		{
+			PRINT_TOPIC(Struct paddings);
+
+			struct {
+				double d; // 8 bytes
+				union {
+					double d;
+					int i;
+					char str[9];
+				} u; // 9 bytes + 7 bytes padding
+				char str[3]; // 3 bytes + 5 bytes padding
+			} s = {0};
+
+			//s.d = VAL_TO_TYPE(0x0123456789abcdef, double);
+			strcpy(s.u.str, "abcdefgh");
+			strcpy(s.str, "\xa" "\xb");
+
+			printf("sizeof s = %zu\n", sizeof s);
+			printf("sizeof s.u = %zu\n", sizeof s.u);
+			PRINT_MEM(s);
+		}
+
+		{
+			union {
+				int i;
+				struct sss {
+					int i_a[5]; // 20 + 4
+					double d; // 8
+					char str[4]; // 4 + 4
+				} s; // 20 bytes + 4 bytes padding
+				char str[4];
+			} u = {0};
+
+			u.s = (struct sss) {
+				{-1, -1, -1, -1, -1},
+				VAL_TO_TYPE(0x0123456789abcdef, double),
+				"abc",
+			};
+
+			printf("sizeof u = %zu\n", sizeof u);
+			printf("sizeof u.s = %zu\n", sizeof u.s);
+			PRINT_MEM(u);
+		}
+
+		{
+			struct point {
+				int x, y;
+			};
+
+			struct shape {
+				enum kind {CIRCLE, RECTANGLE,} kind; // 4 bytes
+				struct point center; // 8 bytes
+				union {
+					struct {
+						int width, height;
+					} rectangle;
+					struct {
+						int radius;
+					} circle;
+				} u; // 8 bytes
+			} s; 
+
+			s = (struct shape) {
+				.kind = RECTANGLE,
+				.center = {.x = 0x01234567, .y = 0x89abcdef},
+				.u.rectangle = {0x89abcdef, 0x01234567},
+			};
+			s.kind = CIRCLE;
+			s.u.rectangle.height = 25;
+			s.u.circle.radius = 5;
+
+			// Wow we can access enum tag outside the scope
+			enum kind k;
+
+			printf("sizeof s = %zu\n", sizeof s);
+			printf("sizeof s.u = %zu\n", sizeof s.u);
+			PRINT_MEM(s);
+		}
 	}
+
 
 	return 0;
 }
