@@ -1,19 +1,25 @@
 #include <stdio.h>
 #include <ctype.h>
+#include <stdlib.h>
 
 #include "readln.h"
 
-
-int readln(char *s, int n)
+int readln(char **s, int n)
 {
-	char *p = s;
-	char c;
+	char c, *p;
+
+	p = malloc(n);
+	*s = p;
+
+	if (!p) {
+		return p - *s;
+	}
 
 	// Skip whitespace
 	while (isspace(c = getchar()))
 		;
 	while (c != EOF && c != '\n') {
-		if (p >= s + n - 1) {
+		if (p >= *s + n - 1) {
 			ungetc(c, stdin);
 			break;
 		}
@@ -23,5 +29,5 @@ int readln(char *s, int n)
 
 	*p = 0;
 
-	return p - s;
+	return p - *s;
 }

@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "part.h"
 #include "inventory.h"
 
@@ -69,4 +71,14 @@ static int find_part(int part_number)
 		if (p->number == part_number)
 			return p - inventory;
 	return -1;
+}
+
+// Free allocated memory
+void clean_inventory(void)
+{
+	int i;
+	for (i = 0; i < num_parts; i++)
+		free(inventory[i].name);
+
+	num_parts = 0;
 }

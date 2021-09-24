@@ -10,7 +10,7 @@
 #include "readln.h"
 
 
-#define NAME_SIZE 20
+#define STRING_LENGTH 20
 
 
 int main(void)
@@ -27,7 +27,7 @@ int main(void)
 
 	char command;
 	int part_number, on_hand, change;
-	char part_name[NAME_SIZE];
+	char *part_name;
 
 	for ( ; ; ) {
 		printf("\ni - insert part\ns - find part\nu - update quantity\n"
@@ -61,7 +61,7 @@ int main(void)
 
 			case 'i':
 				printf("Enter part number: "); scanf("%d", &part_number);
-				printf("Enter part name: "); readln(part_name, sizeof part_name);
+				printf("Enter part name: "); readln(&part_name, STRING_LENGTH + 1);
 				printf("Enter quantity: "); scanf("%d", &on_hand);
 				struct part new_part = {
 					.number = part_number,
@@ -75,7 +75,8 @@ int main(void)
 				break;
 
 			case 'q':
-				  return 0;
+				clean_inventory();
+				return 0;
 
 			default:
 				  printf("Wrong command\n");

@@ -25,5 +25,8 @@ int update_on_hand(int part_number, int change);
 // Prints all parts in inventory
 void print_inventory(void);
 
+// Frees memory allocated
+void clean_inventory(void);
+
 
 #endif /* #ifndef INVENTORY_H */
