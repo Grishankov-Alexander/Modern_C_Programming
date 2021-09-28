@@ -8,6 +8,16 @@
 #include "node.h"
 
 
+// Macro function from node.h.
+// Used to free underlying node data from memory
+// Will be called prior to removing the node
+NODE_DATA_CLEAN_FUNC
+
+// Macro function from node.h.
+// Used to compare two objects of type NodeDataType.
+DATA_COMPARE_FUNC
+
+
 /*
  * Public functions on node
 */
@@ -27,12 +37,14 @@ Node *newNode(NodeDataType data)
 }
 
 
+// Call function to free memory of the underlying node data.
 // Free the memory occupied by the Node
 // Returns pointer to the next Node
 // Returns NULL if Node *next is NULL.
 Node *removeNode(Node *n)
 {
 	Node *next_node = n->next;
+	cleanNodeData(n->data);
 	free(n);
 	return next_node;
 }

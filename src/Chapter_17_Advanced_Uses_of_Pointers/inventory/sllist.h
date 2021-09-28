@@ -21,10 +21,6 @@ struct sllist {
 	 * List member functions
 	*/
 
-	// Function that will be used to free the memory
-	// of the underlying data for each Node in the List.
-	void (*cleanFunc) (NodeDataType);
-
 	// Create node with specified data and add it to the end of the list.
 	// If SLList *self is NULL - return NULL
 	// If SLList *self is empty list - Creates first node of the list.
@@ -35,12 +31,26 @@ struct sllist {
 	// Create new Node with specified data. Insert it after Node *after.
 	// If Node *after is NULL - return NULL
 	// If SLList *self is NULL - return NULL
-	Node *(*insertAfter) (SLList *self, NodeDataType data, Node *after);
+	// Update tail if Node *after is the current tail of the list.
+	Node * (*insertAfter) (SLList *self, NodeDataType data, Node *after);
 
-	Node *(*insertBefore) (SLList *self, NodeDataType data, Node *before);
+	// Create new Node with specified data. Insert it before Node *before.
+	// If Node *before is NULL - return NULL
+	// If SLList *self is NULL - return NULL
+	// Update head if Node *head is the current head of the list.
+	Node * (*insertBefore) (SLList *self, NodeDataType data, Node *before);
 
+	// Returns pointer to Node that contains specified data.
+	// Comparison is done using macro function from node.h
+	Node * (*findNode) (SLList *self, NodeDataType data);
+
+	// Remove all nodes from the list *self
+	// If self is NULL - do nothing
 	void (*clearList) (SLList *self);
 
+	// Remove specified node *n from the list *self
+	// if n is NULL - do nothing
+	// if self is NULL - do nothing
 	void (*removeNode) (SLList *self, Node *n);
 };
 
@@ -50,14 +60,7 @@ struct sllist {
 */
 
 // Create and init new list.
-// void (*cleanFunc) (NODE_DATA_TYPE)
-// cleanFunc - pointer to the function that will be used to
-//	free the memory for each data in the Node.
-//	Should be specified if Nodes will have
-//	custom type defined with macro NODE_DATA_TYPE
-//	prior to including "sllist.h" header.
-//	Otherwise should be NULL
-SLList newList(void (*cleanFunc) (NodeDataType));
+SLList newList(void);
 
 
 #endif /* #ifndef SLLLIST_H */

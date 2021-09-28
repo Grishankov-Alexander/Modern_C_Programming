@@ -1,5 +1,14 @@
 /*
- * Node declarations
+ * Node to be used in a singly linked list
+ *
+ * Each node has a 'data' member.
+ * The type of this member can be changed by changing this macros:
+ *	NODE_DATA_TYPE - macro that defines the type of the underlying data
+ *		for each node.
+ *	NODE_DATA_CLEAN_FUNC - macro that defines function that will be
+ *		called prior to removing node and freeing its memory.
+ *	DATA_COMPARE_FUNC - macro that defines function to compare
+ *		objects of NodeDataType
 */
 
 
@@ -7,19 +16,28 @@
 #define NODE_H
 
 
-#ifndef NODE_DATA_TYPE
+// Underlying contents of each node
 #define NODE_DATA_TYPE struct part {int id; int on_hand; char *name;}
-#endif /* #ifndef NODE_DATA_TYPE */
+
+// Function to clean underlying contents to call when deleting a node.
+#define NODE_DATA_CLEAN_FUNC \
+void cleanNodeData(NodeDataType data) { free(data.name); }
+
+// Function to compare two objects of type NodeDataType.
+// Should Return 0 if same.
+// Should Return negative if data1 < data2
+// Should Return positive if data1 > data2
+#define DATA_COMPARE_FUNC \
+int compareData(NodeDataType data1, NodeDataType data2) { return data1.id - data2.id; }
 
 
 typedef NODE_DATA_TYPE NodeDataType;
-typedef struct node Node;
 
 
-struct node {
+typedef struct node {
 	NodeDataType data;
-	Node *next;
-};
+	struct node *next;
+} Node;
 
 
 /*
@@ -44,6 +62,9 @@ Node *removeNode(Node *n);
 // Return NULL on failure
 // Return pointer to new node on success
 Node *insertAfter(NodeDataType data, Node *after);
+
+// Macro function for comparison.
+int compareData(NodeDataType data1, NodeDataType data2);
 
 
 #endif /* #ifndef NODE_H */
