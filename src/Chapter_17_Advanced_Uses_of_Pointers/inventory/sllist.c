@@ -163,6 +163,20 @@ static Node *m_findNode(SLList *self, NodeDataType data)
 }
 
 
+// Returns pointer to Node whose data is bigger than data argument
+// Returns NULL if not found
+static Node *m_findBigger(SLList *self, NodeDataType data)
+{
+	Node *p;
+
+	for (p = self->head; p; p = p->next)
+		if (compareData(p->data, data) > 0)
+			break;
+
+	return p;
+}
+
+
 
 /*
  * Public functions of the list
@@ -181,6 +195,7 @@ SLList newList(void)
 	new.removeNode = &m_removeNode;
 	new.clearList = &m_clearList;
 	new.findNode = &m_findNode;
+	new.findBigger = &m_findBigger;
 
 	return new;
 }

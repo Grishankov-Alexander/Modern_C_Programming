@@ -44,6 +44,10 @@ struct sllist {
 	// Comparison is done using macro function from node.h
 	Node * (*findNode) (SLList *self, NodeDataType data);
 
+	// Returns pointer to Node whose data is bigger than data argument
+	// Returns NULL if not found
+	Node * (*findBigger) (SLList *self, NodeDataType data);
+
 	// Remove all nodes from the list *self
 	// If self is NULL - do nothing
 	void (*clearList) (SLList *self);
