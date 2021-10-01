@@ -44,6 +44,7 @@ void foreach(void *base, size_t nmemb, size_t szmemb, void (*f) (void *));
 // For testing "qsort"
 int cmpById(const void *p, const void *q);
 int cmpByName(const void *p, const void *q);
+int cmpStrings(const void *p, const void *q);
 
 
 
@@ -103,6 +104,16 @@ int main(void)
 		qsort(inv, sizeof inv / sizeof *inv, sizeof *inv, cmpByName);
 		printf("\nSorted by name:\n");
 		printParts(inv, sizeof inv / sizeof *inv);
+
+		char * words[] = {
+			strcpy(malloc(sizeof "ghi"), "ghi"),
+			strcpy(malloc(sizeof "def"), "def"),
+			strcpy(malloc(sizeof "abc"), "abc"),
+		};
+		qsort(words, sizeof words / sizeof *words,
+			sizeof *words, cmpStrings);
+		printf("\n1: %s\n2: %s\n3: %s\n",
+			*words, *(words + 1), *(words + 2));
 	}
 
 
@@ -232,4 +243,10 @@ tabulate(
 		res = (*mathfn)(curr);
 		printf("%5lg%6s%lg\n", curr, "", res);
 	}
+}
+
+
+int cmpStrings(const void *p, const void *q)
+{
+	return strcmp(*(char **) p, *(char **) q);
 }

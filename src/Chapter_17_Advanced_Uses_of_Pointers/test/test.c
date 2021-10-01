@@ -37,6 +37,73 @@ int main(void)
 		free(s2);
 	}
 
+
+	// Restricted Pointers
+	// I don't understand - no warnings for code below.
+	{
+		PRINT_TOPIC(Restricted Pointers);
+
+		int a = 5;
+		int * restrict p;
+		int * restrict q;
+
+		p = &a;
+		*p = 6;
+
+		q = p;
+		printf("*q = %d\n", *q);
+
+		*q = 7;
+	}
+
+
+	// Flexible array members
+	{
+		PRINT_TOPIC(Flexible array Members C99);
+
+		// Struct hack - before C99
+		struct vstring {
+			int n;
+			char str[4];
+		};
+
+		int strsize = 5;
+		const char *mystr = "abcd";
+
+		// Should allocate 9 bytes
+		struct vstring *vstr = malloc(sizeof *vstr - sizeof vstr->str + strsize);
+		printf("sizeof *vstr = %zu\n", sizeof *vstr - sizeof vstr->str + strsize);
+
+		vstr->n = strlen(mystr) + 1;
+		strcpy(vstr->str, mystr);
+		printf("vstr->str = %s\n", vstr->str);
+
+		free(vstr);
+
+
+		// C99 Flexible array members
+		// P.S. struct flexvstr - incomplete type
+		struct flexvstr {
+			int size;
+			char str[];
+		};
+
+		printf("\nsizeof (flexvstr) = %zu\n", sizeof (struct flexvstr));
+
+		struct flexvstr *fvstr = malloc(sizeof *vstr + strsize);
+		fvstr->size = strsize;
+		strcpy(fvstr->str, mystr);
+		free(fvstr);
+
+		// Only array of pointers is possible
+		struct flexvstr *fvstrarr[2] = {
+			malloc(sizeof **fvstrarr + sizeof "abcde"),
+			malloc(sizeof **fvstrarr + sizeof "fghij"),
+		};
+		free(fvstrarr[0]);
+		free(fvstrarr[1]);
+	}
+
 	return 0;
 }
 
