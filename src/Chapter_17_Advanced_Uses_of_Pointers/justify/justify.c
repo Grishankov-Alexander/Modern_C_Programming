@@ -43,7 +43,7 @@ void freeString(void *str);
 // Writes words from the list to stdout with justification
 // with regard to number of empty spaces num_whitespaces.
 // Clears the list.
-void writeJust(struct node *wordList, size_t num_whitespaces);
+void writeJust(struct node *wordList);
 
 // Writes words from the list to stdout without justification.
 // Clears the list.
@@ -54,14 +54,12 @@ int main(void)
 {
 	int column;
 	int word_i;
-	size_t num_whitespaces;
 	char c;
 	char word[LINE_SIZE + 1];
 	struct node *wordList;
 
 	column = 0;
 	word_i = 0;
-	num_whitespaces = 0;
 	word[word_i] = '\0';
 	wordList = NULL;
 
@@ -81,11 +79,10 @@ int main(void)
 			wordList = addNode(wordList, newStr(word));
 			word_i = 0;
 			word[word_i] = '\0';
-			num_whitespaces++;
 		}
 
 		else if (isspace(c))
-			num_whitespaces++;
+			;
 
 		else {
 			word[word_i++] = c;
@@ -95,14 +92,16 @@ int main(void)
 		if (column == LINE_SIZE)
 		{
 			if (wordList) {
-				writeJust(wordList, num_whitespaces);
+				writeJust(wordList);
 				wordList = NULL;
 			}
 
-			else if (strlen(word))
+			else if (strlen(word)) {
 				printf("%s\n", word);
+				word_i = 0;
+				word[word_i] = '\0';
+			}
 
-			num_whitespaces = 0;
 			column = 0;
 		}
 
@@ -175,11 +174,19 @@ void freeString(void *str)
 // Writes words from the list to stdout with justification
 // with regard to number of empty spaces num_whitespaces.
 // Clears the list.
-void writeJust(struct node *wordList, size_t num_whitespaces)
+void writeJust(struct node *wordList)
 {
 	struct node *n;
-	int spaces_to_insert;
+	size_t spaces_to_insert;
 	size_t num_words;
+	size_t num_whitespaces;
+	size_t num_characters = 0;
+
+	for (n = wordList; n; n = n->next) {
+		num_characters += strlen((char *) n->data);
+	}
+
+	num_whitespaces = LINE_SIZE - num_characters;
 
 	num_words = countNodes(wordList);
 
