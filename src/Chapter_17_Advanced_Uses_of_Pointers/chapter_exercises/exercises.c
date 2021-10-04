@@ -34,6 +34,18 @@ char *newStr(const char *str);
 void *newArray(const void *init, size_t nmemb, size_t szmemb);
 
 
+// Passing function pointer to a function
+int f1(int (*f) (int));
+int f2(int i);
+
+
+// Revised function from exercise 13.
+// Should insert nodes by ascending value.
+// Real good implementation kek.
+struct node {int value; struct node *next;};
+struct node *insertOrdered(struct node *list, struct node *new);
+
+
 
 
 int main(void)
@@ -86,6 +98,14 @@ int main(void)
 		p->lower_right = (struct point) {20, 15};
 
 		myMalloc(p, 0);
+	}
+
+
+	// Passing function pointer to a function
+	{
+		PRINT_TOPIC(Passing function pointer to a function);
+
+		printf("%d\n", f1(f2));
 	}
 
 
@@ -149,4 +169,35 @@ void *newArray(const void *init, size_t nmemb, size_t szmemb)
 		memcpy(p, init, szmemb);
 
 	return a;
+}
+
+
+int f1(int (*f) (int))
+{
+	int n = 0;
+
+	while ((*f)(n)) n++;
+
+	return n;
+}
+
+
+int f2(int i)
+{
+	return i * i + i - 12;
+}
+
+
+struct node *insertOrdered(struct node *list, struct node *new)
+{
+	struct node **listptr;
+
+	for (listptr = &list; *listptr; listptr = &(*listptr)->next)
+		if ((*listptr)->value > new->value)
+			break;
+
+	new->next = *listptr;
+	*listptr = new;
+
+	return list;
 }
