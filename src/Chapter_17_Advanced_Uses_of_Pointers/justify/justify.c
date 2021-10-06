@@ -12,7 +12,7 @@
 #include <stdint.h>
 
 
-#define LINE_SIZE 50 /* 50 chars on the line */
+#define LINE_SIZE 20 /* 20 chars on the line */
 
 
 struct node {
@@ -89,22 +89,21 @@ int main(void)
 			word[word_i] = '\0';
 		}
 
+
+
 		if (column == LINE_SIZE)
 		{
-			if (wordList) {
-				writeJust(wordList);
-				wordList = NULL;
-			}
-
-			else if (strlen(word)) {
-				printf("%s\n", word);
-				word_i = 0;
-				word[word_i] = '\0';
-			}
-
+			writeJust(wordList);
+			wordList = NULL;
 			column = 0;
 		}
 
+		if (strlen(word) == LINE_SIZE) {
+			printf("%s\n", word);
+			word_i = 0;
+			word[word_i] = '\0';
+			column = 0;
+		}
 	}
 }
 
@@ -208,7 +207,7 @@ void writeJust(struct node *wordList)
 		}
 	}
 
-	putchar('\n');
+	if (wordList) putchar('\n');
 
 	clearList(wordList, freeString);
 }
