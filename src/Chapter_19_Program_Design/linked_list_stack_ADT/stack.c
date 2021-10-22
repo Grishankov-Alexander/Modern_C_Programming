@@ -1,5 +1,6 @@
 /*
- * Abstract Generic Stack module implementation
+ * Generic Stack Abstract Data Type module implementation
+ * using a singly linked list.
 */
 
 
@@ -7,25 +8,24 @@
 #include "stack.h"
 
 
-struct stack_node {
+typedef struct StackNode {
 	void *item;
-	struct stack_node *prev;
-};
+	struct StackNode *prev;
+} StackNode;
 
 
-struct stack {
-	struct stack_node *head;
-};
+typedef struct Stack {
+	StackNode *head;
+} Stack;
 
 
 /* Create new stack on the heap.
  * 
  * Returns pointer to the new stack.
- * Returns Null on allocation failure
 */
-StackPtr stackCreate(void)
+Stack *stackCreate(void)
 {
-	StackPtr s;
+	Stack *s;
 
 	s = malloc(sizeof *s);
 	s->head = NULL;
@@ -42,7 +42,7 @@ StackPtr stackCreate(void)
  * for deallocating any item by calling stackPop()
  * and calling free() on the result
 */
-void stackDestroy(StackPtr s)
+void stackDestroy(Stack *s)
 {
 	stackClear(s);
 	free(s);
@@ -57,9 +57,9 @@ void stackDestroy(StackPtr s)
  * for deallocating any item by calling stackPop()
  * and calling free() on the result
 */
-void stackClear(StackPtr s)
+void stackClear(Stack *s)
 {
-	struct stack_node *popped;
+	StackNode *popped;
 
 	while (s->head) {
 		popped = s->head;
@@ -70,9 +70,9 @@ void stackClear(StackPtr s)
 
 
 // Adds item to the stack
-void stackPush(StackPtr s, void *item)
+void stackPush(Stack *s, void *item)
 {
-	struct stack_node *pushed;
+	StackNode *pushed;
 
 	pushed = malloc(sizeof *pushed);
 	pushed->item = item;
@@ -89,9 +89,9 @@ void stackPush(StackPtr s, void *item)
  *
  * Returns popped item.
 */
-void *stackPop(StackPtr s)
+void *stackPop(Stack *s)
 {
-	struct stack_node *popped;
+	StackNode *popped;
 	void *item;
 
 	popped = s->head;
@@ -103,17 +103,24 @@ void *stackPop(StackPtr s)
 }
 
 
+// Returns last item from the stack without changing the stack
+void *stackPeek(Stack *s)
+{
+	return s->head->item;
+}
+
+
 /* Returns 1 is stack is empty,
  * Returns 0 otherwise.
 */
-int stackIsEmpty(StackPtr s)
+int stackIsEmpty(Stack *s)
 {
 	return s->head == NULL ? 1 : 0;
 }
 
 
 // Returns 0 always
-int stackIsFull(StackPtr s)
+int stackIsFull(Stack *s)
 {
-	return 0 & *(int *) s;
+	return (void *) s && NULL;
 }

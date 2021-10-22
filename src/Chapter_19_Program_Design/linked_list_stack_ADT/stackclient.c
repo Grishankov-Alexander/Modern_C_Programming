@@ -10,14 +10,17 @@
 
 int main(void)
 {
-	StackPtr s;
+	Stack *s;
 	int i;
 	char *str;
 
 	s = stackCreate();
 	i = 5, stackPush(s, &i);
 	i = 7, stackPush(s, &i);
+	printf("%d\n", *(int *) stackPeek(s));
 	printf("%d\n", *(int *) stackPop(s));
+	if (!stackIsEmpty(s))
+		stackClear(s);
 	stackDestroy(s);
 
 	s = stackCreate();

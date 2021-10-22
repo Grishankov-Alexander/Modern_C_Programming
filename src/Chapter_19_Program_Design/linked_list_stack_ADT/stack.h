@@ -1,17 +1,21 @@
 /*
- * Abstract Generic Stack module
+ * Generic Stack Abstract Data Type module
 */
 
 
-typedef struct stack *StackPtr;
+#ifndef STACK_ADT
+#define STACK_ADT
+
+
+struct Stack;
+typedef struct Stack Stack;
 
 
 /* Create new stack on the heap.
  * 
- * Returns pointer to new stack.
- * Returns Null on allocation failure
+ * Returns pointer to the new stack.
 */
-StackPtr stackCreate(void);
+Stack *stackCreate(void);
 
 
 /* Removes stack s from the heap
@@ -22,7 +26,7 @@ StackPtr stackCreate(void);
  * for deallocating any item by calling stackPop()
  * and calling free() on the result
 */
-void stackDestroy(StackPtr s);
+void stackDestroy(Stack *s);
 
 
 /* Removes all contents of the stack s
@@ -33,11 +37,11 @@ void stackDestroy(StackPtr s);
  * for deallocating any item by calling stackPop()
  * and calling free() on the result
 */
-void stackClear(StackPtr s);
+void stackClear(Stack *s);
 
 
 // Adds item to the stack
-void stackPush(StackPtr s, void *item);
+void stackPush(Stack *s, void *item);
 
 
 /* Retrieves last stack item.
@@ -48,14 +52,21 @@ void stackPush(StackPtr s, void *item);
  *
  * Returns popped item.
 */
-void *stackPop(StackPtr s);
+void *stackPop(Stack *s);
+
+
+// Returns last item from the stack without changing the stack
+void *stackPeek(Stack *s);
 
 
 /* Returns 1 is stack is empty,
  * Returns 0 otherwise.
 */
-int stackIsEmpty(StackPtr s);
+int stackIsEmpty(Stack *s);
 
 
 // Returns 0 always
-int stackIsFull(StackPtr s);
+int stackIsFull(Stack *s);
+
+
+#endif /* #ifndef STACK_ADT */
