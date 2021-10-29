@@ -140,5 +140,42 @@ int main(void)
 		printBinary(&j, sizeof j, true);
 	}
 
+
+	{
+		PRINT_TOPIC(Bit Fields and Structures);
+
+		struct storage {
+			unsigned int a : 5;	// 5 bits (from 0 to 31)
+			unsigned int b : 4;
+			unsigned int : 8;	// Padding 8 bits
+			signed int c : 7;	// 7 bits (from -64 to 63)
+			int : 0;		// Break paddind (skip until the end of allocation unit)
+			unsigned int d : 32;	// May not work if unsigned int takes less than 32 bits
+		};
+
+		struct storage s;
+		// &s.a = illegal operation
+		s.a = 0x11;	// 10001
+		s.b = 0x9;	// 1001
+		s.c = -63;	// 1000001
+		s.d = ~0;	// All ones
+
+		printBinary(&s, sizeof s, true);
+
+
+		// Next operations assume Little-Endian storage.
+		unsigned int *field = (void *) &s;
+		// Overwrite s.a to 01110
+		*field = (*field & ~(0x1f)) | (0xE);
+		// Overwrite s.b to 0110
+		*field = (*field & ~(0xF << 5)) | (0x6 << 5);
+		// Toggle s.c
+		*field ^= 0x7F << 17;
+		// Switch to the next bit field and toggle it
+		*++field ^= ~0;
+
+		printBinary(&s, sizeof s, true);
+	}
+
 	return 0;
 }
