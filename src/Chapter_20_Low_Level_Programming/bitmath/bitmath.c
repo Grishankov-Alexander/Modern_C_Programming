@@ -74,47 +74,70 @@ int main(void)
 		printBinary(&si1, sizeof si1, true);
 
 		// Precedency for binary operators
-		_Pragma("GCC diagnostic push");
-		_Pragma("GCC diagnostic ignored \"-Wparentheses\"");
-		ui1 =	0xaa |	// 3) 10101010 | 10011100 = 10111110
-			0xcc ^	// 2) 11001100 ^ 01010000 = 10011100
-			0xf0 &	// 1)11110000 & 01010101 = 01010000
-			0x55;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wparentheses"
+		ui1 =	0xAA |	// 3) 10101010 | 10011100 = 10111110
+			0xCC ^	// 2) 11001100 ^ 01010000 = 10011100
+			0xF0 &	// 1)11110000 & 01010101 = 01010000
+			0x550 >> 4;
+#pragma GCC diagnostic pop
 		printBinary(&ui1, sizeof ui1, true);
-		_Pragma("GCC diagnostic pop");
 
 	}
 
 
 	{
-		PRINT_TOPIC(Accessing bits);
+		PRINT_TOPIC(Accessing individual bits);
 
-		uint8_t us1 = 0;
+		uint8_t ui1 = 0;
 
 		// Set bit 4 to 1;
-		us1 |= 1 << 4;
-		printBinary(&us1, sizeof us1, true);
+		ui1 |= 1 << 4;
+		printBinary(&ui1, sizeof ui1, true);
 
 		// Unset bit 4
-		us1 &= ~(1 << 4);
-		printBinary(&us1, sizeof us1, true);
+		ui1 &= ~(1 << 4);
+		printBinary(&ui1, sizeof ui1, true);
 
 		// Toggle bits 0, 3 and 5
-		us1 ^= 1 + 8 + 32;
-		printBinary(&us1, sizeof us1, true);
+		ui1 ^= 1 + 8 + 32;
+		printBinary(&ui1, sizeof ui1, true);
 
 		// Test for bits 0 or 2
-		if (us1 & (1 | 4))
+		if (ui1 & (1 | 4))
 			printf("bit 0 or 2 is set\n");
 
 		// Test for bits 0 and 3
-		if ((us1 & (1 | 8)) == (1 | 8))
+		if ((ui1 & (1 | 8)) == (1 | 8))
 			printf("bits 0 and 3 are set\n");
 	}
 
 
 	{
-		PRINT_TOPIC(Bit Fields);
+		PRINT_TOPIC(Accessing multiple bits);
+
+		uint8_t ui1 = ~0, j;
+
+		// Clear 3 bits starting from bit 4
+		ui1 &= ~(0x7 << 4);
+		printBinary(&ui1, sizeof ui1, true);
+
+		// Set 3 bits starting from bit 4
+		ui1 |= 0x7 << 4;
+		printBinary(&ui1, sizeof ui1, true);
+
+		// toggle 3 bits starting from bit 5
+		ui1 ^= 0x7 << 5;
+		printBinary(&ui1, sizeof ui1, true);
+
+		// Modify bits 4-7 to store the value j
+		j = 0xA;
+		ui1 = (ui1 & ~0xF0) | (j << 4);
+		printBinary(&ui1, sizeof ui1, true);
+
+		// Retreive the value of bits 4-7 of ui1
+		j = ui1 >> 4 & 0xF;
+		printBinary(&j, sizeof j, true);
 	}
 
 	return 0;
