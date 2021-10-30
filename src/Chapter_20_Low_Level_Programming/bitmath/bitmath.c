@@ -177,5 +177,57 @@ int main(void)
 		printBinary(&s, sizeof s, true);
 	}
 
+
+	{
+		PRINT_TOPIC(Multiple views of data with unions);
+
+		typedef unsigned char Byte;
+		typedef uint16_t Word;
+
+		struct date {
+			Word day : 5, month : 4, year : 7;
+		};
+
+		union fast_date{
+			Word _dt;
+			struct date dt;
+		};
+
+		struct date dt = {.day = 0x1, .month = 0x3, .year = 0x7F};
+		union fast_date fdt = {0xFFFF};
+		fdt = *(union fast_date *) &dt;
+
+		printBinary(&dt, sizeof dt, true);
+		printBinary(&fdt, sizeof fdt, true);
+
+		union {
+			struct {
+				Word ax, bx, cx, dx;
+			} words;
+			struct {
+				Byte al, ah, bl, bh, cl, ch, dl, dh;
+			} bytes;
+		} registers;
+
+		registers.bytes.al = 0xF7;
+		registers.bytes.ah = 0x7F;
+
+		printBinary(&registers.words.ax, sizeof registers.words.ax, true);
+	}
+
+
+	{
+		PRINT_TOPIC(Volatile Type Qualifier);
+
+		typedef unsigned char Byte;
+
+		// p is a pointer to a volatile byte.
+		// Basically informs the compiler
+		// that contents of memory can be easily changed
+		// outside this translation unit
+		volatile Byte *p = (Byte *) 0x100;
+		p += 1;
+	}
+
 	return 0;
 }
