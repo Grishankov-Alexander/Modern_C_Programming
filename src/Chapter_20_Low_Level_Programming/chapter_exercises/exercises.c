@@ -9,11 +9,11 @@
 
 
 #define SWAP(x, y)		{x ^= y; y ^= x; x ^= y;}
+
 #define MK_COLOR(R, G, B)	((B) << 16 | (G) << 8 | (R))
 #define GET_RED(COLOR)		((COLOR) & 0xff)
 #define GET_GREEN(COLOR)	((COLOR) >> 8 & 0xff)
 #define GET_BLUE(COLOR)		((COLOR) >> 16 & 0xff)
-
 
 #define NUM_BITS(obj)	(sizeof(obj) << 3)
 
@@ -35,6 +35,12 @@ shiftLeft(unsigned int i, unsigned char num_shifts);
 */
 unsigned int
 shiftRight(unsigned int i, unsigned char num_shifts);
+
+/*
+ * Return num_bits bits starting from the starting_bit bit of i.
+*/
+unsigned int
+selectBits(unsigned int i, uint8_t starting_bit, uint8_t num_bits);
 
 
 int main(void)
@@ -75,6 +81,8 @@ int main(void)
 		num = 0x12345678;
 		printf("0x%X\n", num = shiftRight(num, 12));
 		printf("0x%X\n", num = shiftLeft(num, 44));
+
+		printf("Bits 16..23 of num: 0x%X\n", selectBits(num, 23, 8));
 	}
 
 
@@ -110,7 +118,7 @@ void *reverseBytes(void *start, size_t num_bytes)
 unsigned int
 shiftLeft(unsigned int i, unsigned char num_shifts)
 {
-	return (i << (num_shifts % NUM_BITS(i))) | (i >> (NUM_BITS(i) - (num_shifts % NUM_BITS(i))));
+	return (i << num_shifts) | (i >> (NUM_BITS(i) - num_shifts));
 }
 
 /*
@@ -120,5 +128,15 @@ shiftLeft(unsigned int i, unsigned char num_shifts)
 unsigned int
 shiftRight(unsigned int i, unsigned char num_shifts)
 {
-	return shiftLeft(i, NUM_BITS(i) - (num_shifts % NUM_BITS(i)));
+	return (i >> num_shifts) | (i << (NUM_BITS(i) - num_shifts));
+}
+
+
+/*
+ * Return num_bits bits starting from the starting_bit bit of i.
+*/
+unsigned int
+selectBits(unsigned int i, uint8_t starting_bit, uint8_t num_bits)
+{
+	return (i >> (starting_bit + 1 - num_bits)) & ~(~0U << num_bits);
 }
