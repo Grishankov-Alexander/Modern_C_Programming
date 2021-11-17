@@ -208,12 +208,64 @@ SECOND_TOPIC:
 
 
 	/*
-	 * Attaching file to a stream
+	 * Character Input/Output
+	*/
+	{
+		/*
+		 * Character Input Functions:
+		 *
+		 * int getc(FILE *stream)
+		 * 	Macro to get character from stream
+		 * int fgetc(File *stream)
+		 * 	Function to get character from stream
+		 * int getchar(void)
+		 * 	Same as getc(stdin)
+		 *
+		 * Return character on success.
+		 * Return EOF when End-Of-File is reached. Set EOF stream indicator.
+		*/
+
+
+		/*
+		 * Character Output Functions:
+		 *
+		 * int putc(int c, FILE *stream)
+		 * 	Macro to output character c to stream.
+		 * int fputc(int c, File *stream)
+		 * 	Function to output character c to stream
+		 * int putchar(int c)
+		 * 	Same as putc(c, stdout)
+		 * int ungetc(int c, FILE *stream)
+		 * 	Put character c back to stream. Clear EOF stream indicator.
+		 *
+		 * Return c on success.
+		 * Return EOF on Error and set stream error indicator.
+		*/
+
+
+		int c;
+		const char *fn = "formatted.txt";
+		const char *fn2 = "copy.txt";
+		FILE *fp = fopen(fn, "rb");
+		FILE *fp2 = fopen(fn2, "wb");
+
+		while ((c = fgetc(fp)) != EOF)
+			if (c == fputc(c, fp2))
+			{}	// Success
+
+		fclose(fp);
+		fclose(fp2);
+	}
+
+
+	/*
+	 * Stream Redirection
 	*/
 	{
 		if (freopen("stdoutfile", "w", stdout))
 			printf("Redirected stdout to stdoutfile\n");
 	}
+
 
 	return 0;
 }
