@@ -259,6 +259,59 @@ SECOND_TOPIC:
 
 
 	/*
+	 * Line Input/Output
+	*/
+	{
+		/*
+		 * Line Input Functions
+		 *
+		 * char *gets(char *s)
+		 *	Read a line from stdin until \n is encountered.
+		 *	Store line with \0 without \n in s.
+		 * 	Return s on success.
+		 * 	Return NULL on read error. Set StreamError indicator.
+		 * 	Return NULL on EOF. Set EOF stream indicator.
+		 *
+		 * char *fgets(char *s, int n, FILE *stream)
+		 *	Read n - 1 characters from stream until \n is encountered.
+		 *	Store line with \0 with \n in s.
+		 * 	Return s on success.
+		 * 	Return NULL on read error. Set StreamError indicator.
+		 * 	Return NULL on EOF. Set EOF stream indicator.
+		*/
+
+
+		/*
+		 * Line Output Functions
+		 *
+		 * int puts(const char *s)
+		 *	Write s with \n to stdout.
+		 *	Return number of characters written.
+		 *	Return EOF on write error. Set StreamError indicator.
+		 *
+		 * int fputs(const char *s, FILE *stream)
+		 *	Write s to stream.
+		 *	Return number of characters written.
+		 *	Return EOF on write error. Set StreamError indicator.
+		*/
+
+		int num_written;
+		char line[64];
+		const char *fn = "copy.txt";
+		FILE *fp = fopen(fn, "a+");
+
+		// Store last line in line
+		while (fgets(line, sizeof(line), fp) != NULL)
+			;
+		// Duplicate last line
+		num_written = fputs(line, fp);
+		fclose(fp);
+
+		printf("num_written: %d\n", num_written);
+	}
+
+
+	/*
 	 * Stream Redirection
 	*/
 	{
