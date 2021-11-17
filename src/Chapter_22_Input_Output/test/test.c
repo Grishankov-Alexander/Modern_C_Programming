@@ -286,16 +286,15 @@ SECOND_TOPIC:
 		 *
 		 * int puts(const char *s)
 		 *	Write s with \n to stdout.
-		 *	Return number of characters written.
+		 *	Return positive integer on success.
 		 *	Return EOF on write error. Set StreamError indicator.
 		 *
 		 * int fputs(const char *s, FILE *stream)
 		 *	Write s to stream.
-		 *	Return number of characters written.
+		 *	Return positive integer on success.
 		 *	Return EOF on write error. Set StreamError indicator.
 		*/
 
-		int num_written;
 		char line[64];
 		const char *fn = "copy.txt";
 		FILE *fp = fopen(fn, "a+");
@@ -304,10 +303,8 @@ SECOND_TOPIC:
 		while (fgets(line, sizeof(line), fp) != NULL)
 			;
 		// Duplicate last line
-		num_written = fputs(line, fp);
+		fputs(line, fp);
 		fclose(fp);
-
-		printf("num_written: %d\n", num_written);
 	}
 
 
