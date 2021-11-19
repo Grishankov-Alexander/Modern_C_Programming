@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
+#include <string.h>
 
 
 #define PRINT_TOPIC(...)				\
@@ -305,6 +306,38 @@ SECOND_TOPIC:
 		// Duplicate last line
 		fputs(line, fp);
 		fclose(fp);
+	}
+
+
+	/*
+	 * Block Input/Output
+	*/
+	{
+		/*
+		 * size_t fread(void *dest, size_t szmemb, szie_t nmemb, FILE *stream);
+		 * 	Read nmemb objects of size szmemb from stream into dest
+		 * 	Return number of objects read.
+		 *
+		 * size_t fwrite(const void *src, size_t szmemb, szie_t nmemb, FILE *stream);
+		 * 	Write nmemb objects of size szmemb from src into stream.
+		 * 	Return number of objects written.
+		*/
+
+
+		const char *fn = "backup";
+		FILE *fp = fopen(fn, "wb+");
+		size_t num_members = 2;
+
+		struct {
+			char str[3];
+			int i;
+		} a[num_members];
+
+		if (fread(a, sizeof(*a), sizeof(a) / sizeof(*a), fp) != num_members) {
+			clearerr(fp);
+			memcpy(a, "AB\0\0" "C\0\0\0" "DE\0\0" "F\0\0\0", sizeof(a));
+			fwrite(a, sizeof(*a), sizeof(a) / sizeof(*a), fp);
+		}
 	}
 
 
