@@ -342,6 +342,64 @@ SECOND_TOPIC:
 
 
 	/*
+	 * File Positioning
+	*/
+	{
+		/*
+		 * int fseek(FILE *stream, long offset, int whence);
+		 * 	Change stream File Position to whence + offset.
+		 *
+		 * 	offset - possibly negative byte count.
+		 * 	whence - can have values:
+		 * 		1) SEEK_SET - beginning of the file
+		 * 		2) SEEK_CUR - current position
+		 * 		3) SEEK_END - End of File
+		 *
+		 * 	Return 0 on success.
+		 * 	Return !0 on error.
+		 *
+		 * 	Examples:
+		 * 	fseek(fp, 0L, SEEK_SET)		- Return to the file beginning.
+		 * 	fseek(fp, 0L, SEEK_END)		- Return to the file end.
+		 * 	fseek(fp, -10L, SEEK_CUR)	- Move back 10 bytes from current position.
+		 * 	
+		 *
+		 * long ftell(FILE *stream);
+		 * 	Return current file position.
+		 * 	Return -1L on error.
+		 *
+		 * 	Examples:
+		 * 	long file_pos = ftell(fp)	- Save current position
+		 * 		...
+		 * 	fseek(fp, file_pos, SEEK_SET)	- Return to saved position
+		 *
+		 *
+		 * void rewind(FILE *stream)
+		 * 	Clear stream error indicator and set position to the beginning.
+		*/
+
+
+		/*
+		 * For handling large files:
+		 *
+		 * int fgetpos(FILE *stream, fpos_t *pos);
+		 * 	Store current position of stream into *pos.
+		 * 	Return 0 on success.
+		 *
+		 * int fsetpos(FILE *stream, const fpos_t *pos);
+		 * 	Set position of stream to *pos.
+		 * 	Return 0 on success.
+		 *
+		 * Examples:
+		 * 	fpos_t file_pos;
+		 * 	fgetpos(fp, &file_pos);
+		 * 		...
+		 * 	fsetpos(fp, &file_pos);
+		*/
+	}
+
+
+	/*
 	 * Stream Redirection
 	*/
 	{
