@@ -63,8 +63,10 @@ writePart(const Part *p, FILE *stream);
 int main(void)
 {
 	Part **inventory;
+	Part *p_part;
 	size_t num_parts;
 	FILE *fp;
+	fpos_t file_pos;
 
 	inventory = NULL;
 	fp = fopen(FILE_NAME, "rb+");
@@ -116,9 +118,39 @@ int main(void)
 			}
 			free(inventory[num_parts]);
 		}
+
+		// Clean Up
 		free(inventory);
+		inventory = NULL;
+		num_parts = 0;
+
+		fclose(fp);
+		fp = fopen(FILE_NAME, "rb+");
 	}
 
+	fgetpos(fp, &file_pos);
+
+	// Read Inventory
+	while ((p_part = readPart(fp))) {
+		inventory = realloc(inventory, sizeof(*inventory) * (num_parts + 1));
+		inventory[num_parts++] = p_part;
+	}
+
+	// Clear quantity for each Part
+	for (size_t sz = num_parts; sz; )
+		inventory[--sz]->quantity = 0;
+
+	// Write Data
+	fsetpos(fp, &file_pos);
+	for (size_t sz = 0; sz < num_parts; sz++) {
+		writePart(inventory[sz], fp);
+		free(inventory[sz]);
+	}
+
+	// Clean Up
+	free(inventory);
+	inventory = NULL;
+	num_parts = 0;
 	fclose(fp);
 
 	return 0;
