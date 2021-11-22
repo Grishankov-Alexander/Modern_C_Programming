@@ -244,6 +244,8 @@ SECOND_TOPIC:
 		*/
 
 
+		PRINT_TOPIC();
+
 		int c;
 		const char *fn = "formatted.txt";
 		const char *fn2 = "copy.txt";
@@ -396,6 +398,43 @@ SECOND_TOPIC:
 		 * 		...
 		 * 	fsetpos(fp, &file_pos);
 		*/
+	}
+
+
+	/*
+	 * String Input/Output
+	*/
+	{
+		/*
+		 * int sprintf(char *s, const char *format, ...)
+		 * 	Write format with \0 into s.
+		 * 	Return number of characters written.
+		 * 	Return negative value on encoding error.
+		 *
+		 * int snprintf(char *s, size_t n, const char *format, ...)
+		 * 	Write n - 1 characters from format into s. Add \0 at the end.
+		 * 	Return number of characters written.
+		 *	Return negative value on encoding error.
+		*/
+
+		/*
+		 * int sscanf(const char *s, const char *format, ...)
+		 * 	Read formatted input from s.
+		 *
+		 * 	Return number of items read.
+		 * 	Return EOF if not all items were read.
+		*/
+
+
+		char hello[] = "Hello";
+		char world[] = "World";
+		char s[sizeof(hello) - 1 + sizeof(world) - 1 + 3];
+
+		if (snprintf(s, sizeof(s), "%s, %s", hello, world) == sizeof(s) - 1)
+			fprintf(stdout, "%s\n", s);
+
+		if (sscanf(s, "%[^,] %*[, ] %s", hello, world) == 2)
+			fprintf(stdout, "%s, %s\n", hello, world);
 	}
 
 
